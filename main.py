@@ -28,8 +28,8 @@ api = tesseract.TessBaseAPI()
 api.Init(".","fra",tesseract.OEM_DEFAULT)
 api.SetPageSegMode(tesseract.PSM_SINGLE_COLUMN)
 
-rx1 = re.compile(r'(.*) (\d+\.\d\d)$')
-rx2 = re.compile(r'(\d+) (\d+\.\d\d) (\d+\.\d\d)$')
+rx1 = re.compile(r'(.*) (\d+[\.,_]\s?\d\d).?$')
+rx2 = re.compile(r'(\d+) (\d+[\.,]\d\d) (\d+[\.,]\d\d)$')
 
 def get_items(text):
 	items = []
@@ -39,7 +39,7 @@ def get_items(text):
 		m1 = rx1.match(lines[i])
 		if m1:
 			gr = m1.groups()
-			items.append({'name': gr[0], 'price': float(gr[1]), 'qty': 1})
+			items.append({'name': gr[0], 'price': float(gr[1].replace(',','.').replace('_','.').replace(' ','')), 'qty': 1})
 			i += 1
 		elif i + 1 < len(lines):
 			m2 = rx2.match(lines[i+1])
