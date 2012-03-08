@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import web
 import tesseract
 import base64
 import re
+import json
 
 form = '''
 <html>
@@ -57,6 +60,7 @@ class home:
 		return form
 
 	def POST(self):
+		web.header("Content-Type","text/html; charset=utf-8")
 		infile = web.input()
 		if 'image' in infile:
 			buf = infile.image  #.file.read()
@@ -64,7 +68,7 @@ class home:
 			if buf:
 				result = tesseract.ProcessPagesBuffer(buf,len(buf),api)
 				print result
-				return result
+				return json.dumps(get_items(result))
 		elif 'imagestr' in infile:
 			buf = base64.decodestring(infile.imagestr)
 			f = open('im.jpg', 'wb')
@@ -74,7 +78,7 @@ class home:
 			if buf:
 				result = tesseract.ProcessPagesBuffer(buf,len(buf),api)
 				print result
-				return result
+				return json.dumps(get_items(result))
 
 		print 'none'
 		raise web.seeother('/')
